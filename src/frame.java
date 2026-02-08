@@ -136,6 +136,10 @@ public class frame extends JFrame {
         quickAboutMe.setBorder(new LineBorder(new Color(0, 0, 0)));
         this.contentPane.add(quickAboutMe);
 
+        JTextArea title = makeText("About ME by Mark Kupa", quickAboutMe.getX(), quickAboutMe.getY()-35, 380, 35, 30);
+        this.contentPane.add(title);
+
+
         JTextArea bgLayer = makeBG(quickAboutMe.getX(), quickAboutMe.getY()+400, quickAboutMeWidth+myImage.getWidth(), quickAboutMe.getHeight(), new Color(255, 255, 255));
 
         int titlePad = 20;
@@ -253,7 +257,12 @@ public class frame extends JFrame {
         minecraftModButton.setBounds(minecraftBankProjectText.getX(), minecraftBankProjectText.getY()+minecraftBankProjectText.getHeight()+10, 100, 30);
         minecraftModButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                MinecraftModFrame minecraftMod = new MinecraftModFrame();
+                MinecraftModFrame minecraftMod = null;
+                try {
+                    minecraftMod = new MinecraftModFrame();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 frame.this.setDefaultCloseOperation(1);
                 minecraftMod.setVisible(true);
             }
@@ -270,7 +279,7 @@ public class frame extends JFrame {
                         "if you are interested you can check it out\n" +
                         "on my Github at:\n" +
                         "https://github.com/GuyWithGreenScreen/QuickOBF",
-                bgLayer.getX()+bgLayer.getWidth()-350-titlePad, bgLayer.getY() + titlePad + 70, 350, 175, 14);
+                bgLayer.getX()+bgLayer.getWidth()-375-titlePad, bgLayer.getY() + titlePad + 70, 375, 175, 14);
         quickOBFProjectText.setBorder(new LineBorder(new Color(0, 0, 0)));
         this.contentPane.add(quickOBFProjectText);
         projectSection.add(quickOBFProjectText);
