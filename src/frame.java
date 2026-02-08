@@ -1,19 +1,18 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
 public class frame extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
@@ -93,7 +92,7 @@ public class frame extends JFrame {
         });
     }
 
-    public frame() {
+    public frame() throws IOException {
         this.setDefaultCloseOperation(3);
         this.setBounds(100, 100, 1200, 800);
         this.contentPane = new JPanel();
@@ -102,6 +101,10 @@ public class frame extends JFrame {
         this.setContentPane(this.contentPane);
         this.contentPane.setLayout((LayoutManager)null);
         this.setResizable(false);
+        this.setTitle("About Me - Mark Kupa");
+        File iconImageFile = new File("src/images/me with smile.jpg");
+        BufferedImage image = ImageIO.read(iconImageFile);
+        this.setIconImage(image);
 
         // NOTICE HOW THIS WASNT GENERATED AND I WROTE IT BY HAND? I HAVE to get a 300/10 on this assignment now.
 
@@ -111,7 +114,7 @@ public class frame extends JFrame {
         PictureBox myImage = makeImage("20260207_155934.jpg", 770, 50, 250);
         this.contentPane.add(myImage);
 
-        JTextArea myName = makeText("Mark Kupa", myImage.getX(), myImage.getY()+myImage.getHeight(), myImage.getWidth(), 35, 25);
+        JTextArea myName = makeText(" Mark Kupa", myImage.getX(), myImage.getY()+myImage.getHeight(), myImage.getWidth(), 35, 25);
         myName.setBorder(new LineBorder(new Color(0, 0, 0)));
         this.contentPane.add(myName);
 
@@ -222,7 +225,65 @@ public class frame extends JFrame {
 
         // PROJECT_SEC START
 
+        ArrayList<Component> projectSection = new ArrayList<>();
 
+        JTextArea projectTitleText = makeText("2 Of My Most Recent Projects", bgLayer.getX()+titlePad, bgLayer.getY()+titlePad-10, 600, 60, 25);
+
+        JTextArea minecraftBankProjectText = makeText("This is a mod I made for a Minecraft server\n" +
+                        "I was going to make for me and my friends.\n" +
+                        "Unfortunately the server didn't happen, but\n" +
+                        "I still made the mod for it. This is a very\n" +
+                        "interesting project as it scales across 3\n" +
+                        "languages. Java for the Minecraft mod\n" +
+                        "integration itself, Python for the\n" +
+                        "API and backend, and JS for the site\n" +
+                        "(Plus obviously CSS and HTML)\n" +
+                        "Click button to read more.",
+                bgLayer.getX()+titlePad, bgLayer.getY() + titlePad + 70, 350, 175, 14);
+        minecraftBankProjectText.setBorder(new LineBorder(new Color(0, 0, 0)));
+        this.contentPane.add(minecraftBankProjectText);
+        projectSection.add(minecraftBankProjectText);
+
+        JTextArea minecraftBankProjectTitle = makeText("Minecraft Economy + Bank Mod", minecraftBankProjectText.getX(), minecraftBankProjectText.getY()-30, 350, 35, 20);
+        this.contentPane.add(minecraftBankProjectTitle);
+        projectSection.add(minecraftBankProjectTitle);
+
+        JButton minecraftModButton = new JButton("More Info");
+        minecraftModButton.setBorder(new LineBorder(new Color(0, 0, 0)));
+        minecraftModButton.setBounds(minecraftBankProjectText.getX(), minecraftBankProjectText.getY()+minecraftBankProjectText.getHeight()+10, 100, 30);
+        minecraftModButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MinecraftModFrame minecraftMod = new MinecraftModFrame();
+                frame.this.setDefaultCloseOperation(1);
+                minecraftMod.setVisible(true);
+            }
+        });
+        this.contentPane.add(minecraftModButton);
+        projectSection.add(minecraftModButton);
+
+
+        JTextArea quickOBFProjectText = makeText("This is a CLI app I made for myself in C.\n" +
+                        "Basically it just obfuscates files with a\n" +
+                        "password. While it isn't cryptographically\n" +
+                        "secure, it isn't made to be that. This is\n" +
+                        "one of my most polished projects yet and\n" +
+                        "if you are interested you can check it out\n" +
+                        "on my Github at:\n" +
+                        "https://github.com/GuyWithGreenScreen/QuickOBF",
+                bgLayer.getX()+bgLayer.getWidth()-350-titlePad, bgLayer.getY() + titlePad + 70, 350, 175, 14);
+        quickOBFProjectText.setBorder(new LineBorder(new Color(0, 0, 0)));
+        this.contentPane.add(quickOBFProjectText);
+        projectSection.add(quickOBFProjectText);
+
+        JTextArea quickOBFProjectTitle = makeText("QuickOBF Obfuscator", quickOBFProjectText.getX(), quickOBFProjectText.getY()-30, 350, 35, 20);
+        this.contentPane.add(quickOBFProjectTitle);
+        projectSection.add(quickOBFProjectTitle);
+
+
+        this.contentPane.add(projectTitleText);
+        projectSection.add(projectTitleText);
+        sectionMap.put(Section.PROJECT_SEC, projectSection);
+        hideSection(projectSection);
 
         // PROJECT_SEC END
 
@@ -248,11 +309,20 @@ public class frame extends JFrame {
                 changeSection(Section.CAT_SEC);
             }
         });
-        catSecButton.setBounds(bgLayer.getX() + buttonWidth + buttonPadX, bgLayer.getY()-60, buttonWidth, buttonHeight);
+        catSecButton.setBounds(movieSecButton.getX() + buttonWidth + buttonPadX, bgLayer.getY()-60, buttonWidth, buttonHeight);
         this.contentPane.add(catSecButton);
 
+        JButton projectSecButton = new JButton("My Projects");
+        projectSecButton.setBorder(new LineBorder(new Color(0, 0, 0)));
+        projectSecButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                changeSection(Section.PROJECT_SEC);
+            }
+        });
+        projectSecButton.setBounds(catSecButton.getX() + buttonWidth + buttonPadX, bgLayer.getY()-60, buttonWidth, buttonHeight);
+        this.contentPane.add(projectSecButton);
 
-        changeSection(Section.MOVIE_SEC);
+        changeSection(Section.PROJECT_SEC);
 
         this.contentPane.add(bgLayer);
 
