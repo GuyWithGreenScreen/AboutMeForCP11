@@ -7,8 +7,10 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,21 +24,14 @@ public class frame extends JFrame {
     public static Section currentSection = Section.MOVIE_SEC;
 
     public PictureBox makeImage(String filename, int x, int y, double size) {
-        try {
-            PictureBox temp = new PictureBox(this, "src/images", filename);
-            File imageFile = new File("src/images/" + filename);
-            //System.out.println(imageFile.getAbsolutePath());
-            //System.out.println(imageFile.exists());
-            BufferedImage image = ImageIO.read(imageFile);
-            temp.setBorder(new LineBorder(new Color(0, 0, 0)));
-            SizeRatio myImageSR = new SizeRatio(image.getWidth(), image.getHeight(), size);
-            temp.setBounds(x, y, myImageSR.getWidth(), myImageSR.getHeight());
-            return temp;
-        } catch (IOException e) {
-            System.out.println("IOException!");
-            e.printStackTrace();
-            return new PictureBox(this, "images", filename);
-        }
+        PictureBox temp = new PictureBox(this, "images", filename);
+        //System.out.println(imageFile.getAbsolutePath());
+        //System.out.println(imageFile.exists());
+        ImageCache.Sprite image = ImageCache.getInstance().getImage("images", filename);
+        temp.setBorder(new LineBorder(new Color(0, 0, 0)));
+        SizeRatio myImageSR = new SizeRatio(image.getWidth(), image.getHeight(), size);
+        temp.setBounds(x, y, myImageSR.getWidth(), myImageSR.getHeight());
+        return temp;
     }
 
     public JTextArea makeText(String text, int x, int y, int width, int height, int size) {
@@ -102,9 +97,7 @@ public class frame extends JFrame {
         this.contentPane.setLayout((LayoutManager)null);
         this.setResizable(false);
         this.setTitle("About Me - Mark Kupa");
-        File iconImageFile = new File("src/images/me with smile.jpg");
-        BufferedImage image = ImageIO.read(iconImageFile);
-        this.setIconImage(image);
+        this.setIconImage(ImageCache.getInstance().getImage("images", "me with smile.jpg").getFrame(1d));
 
         // NOTICE HOW THIS WASNT GENERATED AND I WROTE IT BY HAND? I HAVE to get a 300/10 on this assignment now.
 
@@ -131,12 +124,12 @@ public class frame extends JFrame {
                         "servers hosting various things, I also sometimes do small electronics\n" +
                         "projects for fun or for something useful, some tools are on the wall behind me.\n\n" +
                         "I also speak Russian, and was born in Belarus.",
-                myImage.getX()-quickAboutMeWidth, myImage.getY(), quickAboutMeWidth, myImage.getHeight()+myName.getHeight(), 14);
+                myImage.getX()-quickAboutMeWidth, myImage.getY(), quickAboutMeWidth, myImage.getHeight()+myName.getHeight(), 12);
         quickAboutMe.setBackground(new Color(169, 255, 249));
         quickAboutMe.setBorder(new LineBorder(new Color(0, 0, 0)));
         this.contentPane.add(quickAboutMe);
 
-        JTextArea title = makeText("About ME by Mark Kupa", quickAboutMe.getX(), quickAboutMe.getY()-35, 380, 35, 30);
+        JTextArea title = makeText("About ME by Mark Kupa", quickAboutMe.getX(), quickAboutMe.getY()-35, 350, 35, 27);
         this.contentPane.add(title);
 
 
@@ -196,7 +189,7 @@ public class frame extends JFrame {
                         "He is 3 years old, born on\nDec 24th 2022.\n" +
                         "He likes to sleep with me.\n" +
                         "He is also big.\n(ALL muscles NO fat)",
-                charlieImage.getX()+charlieImage.getWidth(), charlieImage.getY(), 200, 100, 12);
+                charlieImage.getX()+charlieImage.getWidth(), charlieImage.getY(), 200, 120, 12);
         charlieAbout.setBorder(new LineBorder(new Color(0, 0, 0)));
         this.contentPane.add(charlieAbout);
         catSection.add(charlieAbout);
@@ -214,7 +207,7 @@ public class frame extends JFrame {
                         "around people but by\n" +
                         "herself. She is also\n" +
                         "the mother of Charlie.",
-                lizzyImage.getX()-180, lizzyImage.getY(), 180, 200, 12);
+                lizzyImage.getX()-180, lizzyImage.getY(), 180, 220, 12);
         lizzyAbout.setBorder(new LineBorder(new Color(0, 0, 0)));
         this.contentPane.add(lizzyAbout);
         catSection.add(lizzyAbout);
@@ -241,9 +234,8 @@ public class frame extends JFrame {
                         "languages. Java for the Minecraft mod\n" +
                         "integration itself, Python for the\n" +
                         "API and backend, and JS for the site\n" +
-                        "(Plus obviously CSS and HTML)\n" +
-                        "Click button to read more.",
-                bgLayer.getX()+titlePad, bgLayer.getY() + titlePad + 70, 350, 175, 14);
+                        "(Plus obviously CSS and HTML)\n",
+                bgLayer.getX()+titlePad, bgLayer.getY() + titlePad + 70, 350, 175, 13);
         minecraftBankProjectText.setBorder(new LineBorder(new Color(0, 0, 0)));
         this.contentPane.add(minecraftBankProjectText);
         projectSection.add(minecraftBankProjectText);
@@ -254,7 +246,7 @@ public class frame extends JFrame {
 
         JButton minecraftModButton = new JButton("More Info");
         minecraftModButton.setBorder(new LineBorder(new Color(0, 0, 0)));
-        minecraftModButton.setBounds(minecraftBankProjectText.getX(), minecraftBankProjectText.getY()+minecraftBankProjectText.getHeight()+10, 100, 30);
+        minecraftModButton.setBounds(minecraftBankProjectText.getX(), minecraftBankProjectText.getY()+minecraftBankProjectText.getHeight()+5, 100, 30);
         minecraftModButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 MinecraftModFrame minecraftMod = null;
@@ -263,8 +255,8 @@ public class frame extends JFrame {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                frame.this.setDefaultCloseOperation(1);
                 minecraftMod.setVisible(true);
+                minecraftMod.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
             }
         });
         this.contentPane.add(minecraftModButton);

@@ -6,28 +6,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class MinecraftModFrame extends JFrame {
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
 
     public PictureBox makeImage(String filename, int x, int y, double size) {
-        try {
-            PictureBox temp = new PictureBox(this, "src/images", filename);
-            File imageFile = new File("src/images/" + filename);
-            //System.out.println(imageFile.getAbsolutePath());
-            //System.out.println(imageFile.exists());
-            BufferedImage image = ImageIO.read(imageFile);
-            temp.setBorder(new LineBorder(new Color(0, 0, 0)));
-            SizeRatio myImageSR = new SizeRatio(image.getWidth(), image.getHeight(), size);
-            temp.setBounds(x, y, myImageSR.getWidth(), myImageSR.getHeight());
-            return temp;
-        } catch (IOException e) {
-            System.out.println("IOException!");
-            e.printStackTrace();
-            return new PictureBox(this, "images", filename);
-        }
+        PictureBox temp = new PictureBox(this, "images", filename);
+        //System.out.println(imageFile.getAbsolutePath());
+        //System.out.println(imageFile.exists());
+        ImageCache.Sprite image = ImageCache.getInstance().getImage("images", filename);
+        temp.setBorder(new LineBorder(new Color(0, 0, 0)));
+        SizeRatio myImageSR = new SizeRatio(image.getWidth(), image.getHeight(), size);
+        temp.setBounds(x, y, myImageSR.getWidth(), myImageSR.getHeight());
+        return temp;
     }
+
 
     public JTextArea makeText(String text, int x, int y, int width, int height, int size) {
         JTextArea temp = new JTextArea();
@@ -74,9 +70,7 @@ public class MinecraftModFrame extends JFrame {
         this.contentPane.setLayout((LayoutManager)null);
         this.setResizable(false);
         this.setTitle("Minecraft Economy Mod");
-        File iconImageFile = new File("src/images/Screenshot_20260207_213017.png");
-        BufferedImage image = ImageIO.read(iconImageFile);
-        this.setIconImage(image);
+        this.setIconImage(ImageCache.getInstance().getImage("images", "Screenshot_20260207_213017.png").getFrame(1d));
 
         JTextArea aboutProject = makeText(
                    "The core idea for this project was to allow players to be able\n" +
@@ -109,10 +103,10 @@ public class MinecraftModFrame extends JFrame {
                            "transactions\n" +
                            "- Dynamic site pages for when new coins and resources are\n" +
                            "added.",
-                45, 45, 500, 550, 14);
+                45, 45, 500, 650, 14);
         this.contentPane.add(aboutProject);
 
-        JTextArea title = makeText("Minecraft Economy Mod", aboutProject.getX(), aboutProject.getY()-40, 400, 30, 30);
+        JTextArea title = makeText("Minecraft Economy Mod", aboutProject.getX(), aboutProject.getY()-40, 400, 50, 30);
         this.contentPane.add(title);
 
 
