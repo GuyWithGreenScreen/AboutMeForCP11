@@ -1,0 +1,193 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class frame extends JFrame {
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+
+    public static HashMap<Section, ArrayList<Component>> sectionMap = new HashMap<>();
+
+    public static Section currentSection = Section.MOVIE_SEC;
+
+    public PictureBox makeImage(String filename, int x, int y, double size) {
+        try {
+            PictureBox temp = new PictureBox(this, "src/images", filename);
+            File imageFile = new File("src/images/" + filename);
+            //System.out.println(imageFile.getAbsolutePath());
+            //System.out.println(imageFile.exists());
+            BufferedImage image = ImageIO.read(imageFile);
+            temp.setBorder(new LineBorder(new Color(0, 0, 0)));
+            SizeRatio myImageSR = new SizeRatio(image.getWidth(), image.getHeight(), size);
+            temp.setBounds(x, y, myImageSR.getWidth(), myImageSR.getHeight());
+            return temp;
+        } catch (IOException e) {
+            System.out.println("IOException!");
+            e.printStackTrace();
+            return new PictureBox(this, "images", filename);
+        }
+    }
+
+    public JTextArea makeText(String text, int x, int y, int width, int height, int size) {
+        JTextArea temp = new JTextArea();
+        temp.setEditable(false);
+        temp.setLineWrap(true);
+        temp.setFont(new Font("Monospaced", 1, size));
+        temp.setText(text);
+        temp.setBounds(x, y, width, height);
+        return temp;
+    }
+
+    public JTextArea makeBG(int x, int y, int width, int height, Color color) {
+        JTextArea temp = new JTextArea();
+        temp.setEditable(false);
+        temp.setLineWrap(true);
+        temp.setFont(new Font("Monospaced", 1, 1));
+        temp.setText("");
+        temp.setBounds(x, y, width, height);
+        temp.setBackground(color);
+        return temp;
+    }
+
+    public void hideSection(ArrayList<Component> section) {
+        for (Component c : section) {
+            c.hide();
+        }
+    }
+
+    public void showSection(ArrayList<Component> section) {
+        for (Component c : section) {
+            c.show();
+        }
+    }
+
+    public void changeSection(Section newSection) {
+        hideSection(sectionMap.get(currentSection));
+        showSection(sectionMap.get(newSection));
+        currentSection = newSection;
+    }
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    frame frame = new frame();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    public frame() {
+        this.setDefaultCloseOperation(3);
+        this.setBounds(100, 100, 1200, 800);
+        this.contentPane = new JPanel();
+        this.contentPane.setBackground(new Color(14, 68, 94));
+        //this.contentPane.setBorder(new TitledBorder((Border)null, "", 4, 2, (Font)null, (Color)null));
+        this.setContentPane(this.contentPane);
+        this.contentPane.setLayout((LayoutManager)null);
+        this.setResizable(false);
+
+        // NOTICE HOW THIS WASNT GENERATED AND I WROTE IT BY HAND? I HAVE to get a 300/10 on this assignment now.
+
+        //PictureBox gta = makeImage("GAMBLEGAMBLEGAMBLE.jpg", 160, 350, 351);
+        //this.contentPane.add(gta);
+
+        PictureBox myImage = makeImage("20260207_155934.jpg", 770, 50, 250);
+        this.contentPane.add(myImage);
+
+        JTextArea myName = makeText("Mark Kupa", myImage.getX(), myImage.getY()+myImage.getHeight(), myImage.getWidth(), 35, 25);
+        myName.setBorder(new LineBorder(new Color(0, 0, 0)));
+        this.contentPane.add(myName);
+
+        int quickAboutMeWidth = 660;
+        JTextArea quickAboutMe = makeText("My name is Mark Kupa, I'm in grade 11 (but you probably knew that).\n" +
+                        "I've been programming for 8 years, my strongest languages are C, Python,\nand Java ordered from most to least in experience" +
+                        " and knowledge,\nthough I know all 3 quite well. I have done multiple projects in these languages.\n\n" +
+                        "Other languages I've used before include JS, NASM ASM, C++, HTML, and CSS.\n\n" +
+                        "Some of my interests include low level systems, semiconductor architecture\n" +
+                        "and fabrication, video making, graphics design, and anything to do with a\n" +
+                        "computer basically.\n\n" +
+                        "I have 2 cats, one of which named Charlie is in the photo to the right.\n\n" +
+                        "I also like building computers and systems, I have a homelab with 3\n" +
+                        "servers hosting various things, I also sometimes do small electronics\n" +
+                        "projects for fun or for something useful, some tools are on the wall behind me.\n\n" +
+                        "I also speak Russian, and was born in Belarus.",
+                myImage.getX()-quickAboutMeWidth, myImage.getY(), quickAboutMeWidth, myImage.getHeight()+myName.getHeight(), 14);
+        quickAboutMe.setBackground(new Color(169, 255, 249));
+        quickAboutMe.setBorder(new LineBorder(new Color(0, 0, 0)));
+        this.contentPane.add(quickAboutMe);
+
+        JTextArea bgLayer = makeBG(quickAboutMe.getX(), quickAboutMe.getY()+400, quickAboutMeWidth+myImage.getWidth(), quickAboutMe.getHeight(), new Color(255, 255, 255));
+
+        int titlePad = 20;
+
+        // MOVIE_SEC START
+
+        ArrayList<Component> movieSection = new ArrayList<>();
+        int moviePadX = 70;
+        int moviePadY = 50;
+
+        JTextArea movieTitleText = makeText("My Favorite Movies", bgLayer.getX()+titlePad, bgLayer.getY()+titlePad-10, 300, 60, 25);
+
+        PictureBox interstellarImage = makeImage("Screenshot_20260207_185451.png", bgLayer.getX() + titlePad, bgLayer.getY() + moviePadY, 165);
+        this.contentPane.add(interstellarImage);
+        movieSection.add(interstellarImage);
+        PictureBox inceptionImage = makeImage("Screenshot_20260207_185515.png", interstellarImage.getX() + interstellarImage.getWidth() + moviePadX, bgLayer.getY() + moviePadY, 165);
+        this.contentPane.add(inceptionImage);
+        movieSection.add(inceptionImage);
+        PictureBox elCaminoImage = makeImage("Screenshot_20260207_185511.png", inceptionImage.getX() + inceptionImage.getWidth() + moviePadX, bgLayer.getY() + moviePadY, 165);
+        this.contentPane.add(elCaminoImage);
+        movieSection.add(elCaminoImage);
+        PictureBox ironManImage = makeImage("Screenshot_20260207_190654.png", elCaminoImage.getX() + elCaminoImage.getWidth() + moviePadX, bgLayer.getY() + moviePadY, 165);
+        this.contentPane.add(ironManImage);
+        movieSection.add(ironManImage);
+
+        this.contentPane.add(movieTitleText);
+        movieSection.add(movieTitleText);
+
+        sectionMap.put(Section.MOVIE_SEC, movieSection);
+        hideSection(movieSection);
+
+        // MOVIE_SEC END
+
+
+
+        // CAT_SEC START
+        ArrayList<Component> catSection = new ArrayList<>();
+
+        JTextArea catTitleText = makeText("My Cats", bgLayer.getX()+titlePad, bgLayer.getY()+titlePad-10, 300, 60, 25);
+
+
+
+        this.contentPane.add(catTitleText);
+        catSection.add(catTitleText);
+        sectionMap.put(Section.CAT_SEC, catSection);
+        hideSection(catSection);
+
+        // CAT_SEC END
+
+        // PROJECT_SEC START
+
+
+
+        // PROJECT_SEC END
+        changeSection(Section.CAT_SEC);
+
+        this.contentPane.add(bgLayer);
+
+    }
+}
