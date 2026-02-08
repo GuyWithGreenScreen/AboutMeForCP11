@@ -4,6 +4,8 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -171,6 +173,44 @@ public class frame extends JFrame {
 
         JTextArea catTitleText = makeText("My Cats", bgLayer.getX()+titlePad, bgLayer.getY()+titlePad-10, 300, 60, 25);
 
+        int catPadY = 50;
+        int catPadX = 10;
+
+        PictureBox charlieImage = makeImage("20251218_100422.jpg", bgLayer.getX()+catPadX, bgLayer.getY()+catPadY, 250);
+        this.contentPane.add(charlieImage);
+        catSection.add(charlieImage);
+
+        PictureBox lizzyImage = makeImage("20251121_115732.jpg", bgLayer.getX()+bgLayer.getWidth(), bgLayer.getY()+catPadY, 250);
+        lizzyImage.setLocation(bgLayer.getX()+bgLayer.getWidth()-lizzyImage.getWidth()-catPadX, bgLayer.getY()+catPadY);
+        this.contentPane.add(lizzyImage);
+        catSection.add(lizzyImage);
+
+        JTextArea charlieAbout = makeText("This is Charlie\n" +
+                        "He is 3 years old, born on\nDec 24th 2022.\n" +
+                        "He likes to sleep with me.\n" +
+                        "He is also big.\n(ALL muscles NO fat)",
+                charlieImage.getX()+charlieImage.getWidth(), charlieImage.getY(), 200, 100, 12);
+        charlieAbout.setBorder(new LineBorder(new Color(0, 0, 0)));
+        this.contentPane.add(charlieAbout);
+        catSection.add(charlieAbout);
+
+        JTextArea lizzyAbout = makeText("Lizzy on top, Charlie\n" +
+                        "towards the bottom.\n" +
+                        "Lizzy is almost 5 years\n" +
+                        "old which is crazy to me.\n" +
+                        "She has been from Niagara\n" +
+                        "Falls, to Winnipeg to\n" +
+                        "B.C., so all over Canada,\n" +
+                        "when she went on trips\n" +
+                        "with us. She is more\n" +
+                        "quiet and likes to be\n" +
+                        "around people but by\n" +
+                        "herself. She is also\n" +
+                        "the mother of Charlie.",
+                lizzyImage.getX()-180, lizzyImage.getY(), 180, 200, 12);
+        lizzyAbout.setBorder(new LineBorder(new Color(0, 0, 0)));
+        this.contentPane.add(lizzyAbout);
+        catSection.add(lizzyAbout);
 
 
         this.contentPane.add(catTitleText);
@@ -185,7 +225,34 @@ public class frame extends JFrame {
 
 
         // PROJECT_SEC END
-        changeSection(Section.CAT_SEC);
+
+
+        int buttonPadX = 40;
+        int buttonWidth = 200;
+        int buttonHeight = 40;
+
+        JButton movieSecButton = new JButton("Movies");
+        movieSecButton.setBorder(new LineBorder(new Color(0, 0, 0)));
+        movieSecButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                changeSection(Section.MOVIE_SEC);
+            }
+        });
+        movieSecButton.setBounds(bgLayer.getX(), bgLayer.getY()-60, buttonWidth, buttonHeight);
+        this.contentPane.add(movieSecButton);
+
+        JButton catSecButton = new JButton("My Cats");
+        catSecButton.setBorder(new LineBorder(new Color(0, 0, 0)));
+        catSecButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                changeSection(Section.CAT_SEC);
+            }
+        });
+        catSecButton.setBounds(bgLayer.getX() + buttonWidth + buttonPadX, bgLayer.getY()-60, buttonWidth, buttonHeight);
+        this.contentPane.add(catSecButton);
+
+
+        changeSection(Section.MOVIE_SEC);
 
         this.contentPane.add(bgLayer);
 
